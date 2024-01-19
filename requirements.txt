@@ -49,3 +49,4 @@ urllib3==2.1.0
 gunicorn
 whitenoise
 django-cors-headers
+psycopg2

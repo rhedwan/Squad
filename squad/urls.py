@@ -18,9 +18,9 @@ from apps.users.views import CustomUserDetailsView
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Communities by Agnosys API",
+        title="Team Squads API Hackathon",
         default_version="v1",
-        description="API endpoints for communities",
+        description="All API endpoints for Team Squads",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="contact@snippets.local"),
         license=openapi.License(name="MIT License"),
@@ -30,7 +30,7 @@ schema_view = get_schema_view(
 )
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
     path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     path(
         "swagger/",
@@ -45,5 +45,5 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
-    path("payment/", include("apps.payment.urls"))
+    path("payment/", include("apps.payment.urls")),
 ]
