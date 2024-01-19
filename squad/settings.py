@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "dj_rest_auth",
     "dj_rest_auth.registration",
+    "corsheaders",
     "apps.users",
     "apps.payment",
 ]
@@ -61,12 +62,31 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
+
+
+# CORS_ORIGIN_WHITELIST = (
+#     "http://localhost:3000",  # for localhost (REACT Default)
+#     "http://192.168.0.50:3000",  # for network
+#     "http://localhost:8080",  # for localhost (Developlemt)
+#     "http://192.168.0.50:8080",  # for network (Development)
+#     "https://habuni-squad-hackathon.vercel.app/",
+# )
+
+# CSRF_TRUSTED_ORIGINS = [
+#     "http://localhost:3000",  # for localhost (REACT Default)
+#     "http://192.168.0.50:3000",  # for network
+#     "http://localhost:8080",  # for localhost (Developlemt)
+#     "http://192.168.0.50:8080",  # for network (Development)
+# ]
 
 ROOT_URLCONF = "squad.urls"
 APP_DIR = ROOT_DIR / "apps"
