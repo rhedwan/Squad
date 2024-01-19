@@ -45,5 +45,5 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(),
         name="password_reset_confirm",
     ),
-    path("payment", include("apps.payment.urls"))
+    path("payment/", include("apps.payment.urls"))
 ]
