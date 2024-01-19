@@ -1,9 +1,8 @@
 from rest_framework import generics
-from .serializers import TransactionSerializer
+from .serializers import TransactionSerializer, VirtualAccountSerializer
 from .models import Transaction
-
-# views.py within your Django app
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
 import hmac
 import hashlib
 from django.http import JsonResponse
@@ -12,6 +11,10 @@ from django.views.decorators.http import require_POST
 from django.utils.encoding import force_bytes
 import environ
 import json
+import requests
+from urllib.parse import urljoin
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 env = environ.Env()
 environ.Env.read_env()
@@ -26,6 +29,36 @@ SECRET_KEY = env("SECRET_KEY")
 class TransactionView(generics.ListAPIView):
     queryset = Transaction.objects.all()
     serializer_class = TransactionSerializer
+
+
+class CreateVirtualAccountView(APIView):
+    serializer_class = VirtualAccountSerializer
+
+    @swagger_auto_schema(request_body=VirtualAccountSerializer)
+    def post(self, request, format=None):
+        serializer = VirtualAccountSerializer(data=request.data)
+        if serializer.is_valid():
+            BASE_URL = (
+                "https://sandbox-api-d.squadco.com"  # e.g., "https://api.example.com"
+            )
+
+            # Prepare headers and data
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": f"Bearer {SECRET_KEY}",
+            }
+
+            # Make the POST request
+            response = requests.post(
+                urljoin(BASE_URL, "/virtual-account"),
+                headers=headers,
+                json=serializer.data,
+            )
+            print(response.text)
+            return Response(response.json(), status=200)  # or the API's response
+        else:
+            return Response(serializer.errors, status=400)
 
 
 @require_POST
