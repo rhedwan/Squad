@@ -43,10 +43,13 @@ def webhook_endpoint(request):
             .upper()
         )
 
+        print(
+            f"received_signature,expected_signature: {received_signature},{expected_signature}"
+        )
         if received_signature == expected_signature:
             # Signature matches, you can trust the event came from Squad
             payload = json.loads(raw_body)  # Here you parse the JSON payload
-            # print(payload)
+            print(payload)
             transaction = Transaction(
                 event=payload.get("Event"),
                 transaction_ref=payload.get("transaction_ref"),
@@ -63,12 +66,12 @@ def webhook_endpoint(request):
                 is_recurring=payload.get("is_recurring"),
                 meta=payload.get("meta", {}),
             )
+            print(transaction)
             transaction.save()
 
             # Now you can work with the payload dictionary
             # For example:
             event_type = payload.get("event_type")  # Access data from the payload
-            print(event_type)
 
             # ... (The rest of your event processing logic goes here)
 
