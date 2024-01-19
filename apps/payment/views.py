@@ -50,21 +50,26 @@ def webhook_endpoint(request):
             # Signature matches, you can trust the event came from Squad
             payload = json.loads(raw_body)  # Here you parse the JSON payload
             print(payload)
+            body = payload.get(
+                "Body"
+            )  # "Body" key contains the transaction information
+
+
             transaction = Transaction(
                 event=payload.get("Event"),
-                transaction_ref=payload.get("transaction_ref"),
-                amount=payload.get("amount"),
-                gateway_ref=payload.get("gateway_ref"),
-                transaction_status=payload.get("transaction_status"),
-                email=payload.get("email"),
-                merchant_id=payload.get("merchant_id"),
-                currency=payload.get("currency"),
-                transaction_type=payload.get("transaction_type"),
-                merchant_amount=payload.get("merchant_amount"),
-                created_at=payload.get("created_at"),
-                payment_information=payload.get("payment_information"),
-                is_recurring=payload.get("is_recurring"),
-                meta=payload.get("meta", {}),
+                transaction_ref=body.get("transaction_ref"),
+                amount=body.get("amount"),
+                gateway_ref=body.get("gateway_ref"),
+                transaction_status=body.get("transaction_status"),
+                email=body.get("email"),
+                merchant_id=body.get("merchant_id"),
+                currency=body.get("currency"),
+                transaction_type=body.get("transaction_type"),
+                merchant_amount=body.get("merchant_amount"),
+                created_at=body.get("created_at"),
+                payment_information=body.get("payment_information"),
+                is_recurring=body.get("is_recurring"),
+                meta=body.get("meta", {}),
             )
             print(transaction)
             transaction.save()
