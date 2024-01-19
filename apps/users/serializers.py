@@ -7,6 +7,7 @@ from django_countries.serializer_fields import CountryField
 from phonenumber_field.serializerfields import PhoneNumberField
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+
 # from apps.profiles.models import PhysicianPatient
 from django.core.exceptions import ValidationError
 from .forms import CustomResetForm
@@ -53,14 +54,12 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class CustomRegisterSerializer(RegisterSerializer):
-    username = None
     first_name = serializers.CharField(required=True)
     last_name = serializers.CharField(required=True)
     email = serializers.EmailField(required=True)
     is_admin = serializers.BooleanField(required=False)
     password1 = serializers.CharField(write_only=True)
     password2 = serializers.CharField(write_only=True)
-    referral_code = serializers.CharField(required=False)
 
     def get_cleaned_data(self):
         return {
@@ -69,7 +68,6 @@ class CustomRegisterSerializer(RegisterSerializer):
             "last_name": self.validated_data.get("last_name", ""),
             "is_admin": self.validated_data.get("is_admin", False),
             "password1": self.validated_data.get("password1", ""),
-            "referral_code": self.validated_data.get("referral_code", ""),
         }
 
     def save(self, request):
@@ -80,29 +78,9 @@ class CustomRegisterSerializer(RegisterSerializer):
         user.first_name = self.cleaned_data.get("first_name")
         user.last_name = self.cleaned_data.get("last_name")
         user.is_admin = self.cleaned_data.get("is_admin")
-        if (
-            self.cleaned_data.get("referral_code")
-            and self.cleaned_data.get("is_admin") == True
-        ):
-            raise serializers.ValidationError(
-                {"permission_error": "You can't be a physician and a patient"}
-            )
-        # if self.cleaned_data.get("referral_code"):
-        #     try:
-        #         physician = PhysicianPatient.objects.get(
-        #             referral_code=self.cleaned_data.get("referral_code")
-        #         )
-        #     except (PhysicianPatient.DoesNotExist, ValidationError):
-        #         raise serializers.ValidationError(
-        #             {"referral_code": "Invalid referral code."}
-        #         )
-        #     else:
-        #         user.save()
-        #         physician.patients.add(user)
-        else:
-            user.save()
-            adapter.save_user(request, user, self)
-            setup_user_email(request, user, [])
+        user.save()
+        adapter.save_user(request, user, self)
+        setup_user_email(request, user, [])
 
         return user
 

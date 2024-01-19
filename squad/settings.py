@@ -73,20 +73,21 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 
 
-# CORS_ORIGIN_WHITELIST = (
-#     "http://localhost:3000",  # for localhost (REACT Default)
-#     "http://192.168.0.50:3000",  # for network
-#     "http://localhost:8080",  # for localhost (Developlemt)
-#     "http://192.168.0.50:8080",  # for network (Development)
-#     "https://habuni-squad-hackathon.vercel.app/",
-# )
+CORS_ORIGIN_WHITELIST = (
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "https://habuni-squad-hackathon.vercel.app",
+)
 
-# CSRF_TRUSTED_ORIGINS = [
-#     "http://localhost:3000",  # for localhost (REACT Default)
-#     "http://192.168.0.50:3000",  # for network
-#     "http://localhost:8080",  # for localhost (Developlemt)
-#     "http://192.168.0.50:8080",  # for network (Development)
-# ]
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost:3001",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:3001",
+    "https://habuni-squad-hackathon.vercel.app",
+]
 
 ROOT_URLCONF = "squad.urls"
 APP_DIR = ROOT_DIR / "apps"
@@ -167,16 +168,6 @@ REST_FRAMEWORK = {
     # "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-# SPECTACULAR_SETTINGS = {
-#     "TITLE": "Communities by Agnosys API",
-#     "DESCRIPTION": "API endpoints for communities",
-#     "VERSION": "0.0.1",
-#     "SERVE_INCLUDE_SCHEMA": False,
-#     "SCHEMA_PATH_PREFIX": r"/api/v[0-9]",
-#     "SCHEMA_AUTO_SCHEMA_OPTIONS": {
-#         "WARNING_FILTER": [],
-#     },
-# }
 
 SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
@@ -203,7 +194,7 @@ REST_AUTH = {
     "JWT_AUTH_SECURE": False,
     "JWT_AUTH_HTTPONLY": False,
     "JWT_AUTH_SAMESITE": None,
-    # "REGISTER_SERIALIZER": "apps.users.serializers.CustomRegisterSerializer",
+    "REGISTER_SERIALIZER": "apps.users.serializers.CustomRegisterSerializer",
     "JWT_TOKEN_CLAIMS_SERIALIZER": "apps.users.serializers.CustomTokenObtainPairSerializer",
     "PASSWORD_RESET_SERIALIZER": "apps.users.serializers.CustomPasswordResetSerializer",
     "PASSWORD_RESET_USE_SITES_DOMAIN": False,

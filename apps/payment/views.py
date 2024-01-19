@@ -1,8 +1,6 @@
 from rest_framework import generics
-from .serializers import PaymentLinkSerializer
-from .models import PaymentLink
-from rest_framework.permissions import IsAuthenticated
-import requests
+from .serializers import TransactionSerializer
+from .models import Transaction
 
 # views.py within your Django app
 
@@ -25,6 +23,11 @@ load_dotenv()
 SECRET_KEY = env("SECRET_KEY")
 
 
+class TransactionView(generics.ListAPIView):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+
 @require_POST
 @csrf_exempt
 def webhook_endpoint(request):
@@ -43,7 +46,24 @@ def webhook_endpoint(request):
         if received_signature == expected_signature:
             # Signature matches, you can trust the event came from Squad
             payload = json.loads(raw_body)  # Here you parse the JSON payload
-            print(payload)
+            # print(payload)
+            transaction = Transaction(
+                event=payload.get("Event"),
+                transaction_ref=payload.get("transaction_ref"),
+                amount=payload.get("amount"),
+                gateway_ref=payload.get("gateway_ref"),
+                transaction_status=payload.get("transaction_status"),
+                email=payload.get("email"),
+                merchant_id=payload.get("merchant_id"),
+                currency=payload.get("currency"),
+                transaction_type=payload.get("transaction_type"),
+                merchant_amount=payload.get("merchant_amount"),
+                created_at=payload.get("created_at"),
+                payment_information=payload.get("payment_information"),
+                is_recurring=payload.get("is_recurring"),
+                meta=payload.get("meta", {}),
+            )
+            transaction.save()
 
             # Now you can work with the payload dictionary
             # For example:
@@ -67,29 +87,3 @@ def webhook_endpoint(request):
     except Exception as e:
         # Handle other unexpected errors
         return JsonResponse({"status": "error", "message": str(e)}, status=400)
-
-
-class PaymentLinkCreateListView(generics.ListCreateAPIView):
-    queryset = PaymentLink.objects.all()
-    serializer_class = PaymentLinkSerializer
-    permission_classes = [IsAuthenticated]
-    lookup_field = "id"
-
-    def perform_create(self, serializer):
-        serializer.save(created_by=self.request.user)
-
-
-class InitiateTransaction(generics.CreateAPIView):
-    def post(self, request, *args, **kwargs):
-        r = requests.post(
-            "https://sandbox-api-d.squadco.com/transaction/initiate",
-            data={
-                "amount": 100,
-                "email": "henimastic@gmail.com",
-                "currency": "NGN",
-                "initiate_type": "inline",
-                "transaction_ref": "4678388588350909090AH",
-                "callback_url": "http://squadco.com",
-            },
-        )
-        return super().post(request, *args, **kwargs)

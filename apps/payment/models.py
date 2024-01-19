@@ -1,6 +1,7 @@
 from django.db import models
 import uuid
 from django.contrib.auth import get_user_model
+import json
 
 User = get_user_model()
 
@@ -17,10 +18,26 @@ class TimeStampedModel(models.Model):
         ordering = ["-created_at", "-updated_at"]
 
 
-class PaymentLink(TimeStampedModel):
-    name = models.CharField(max_length=255)
-    description = models.CharField(max_length=255)
-    created_by = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="payment_link_owner"
-    )
-    price = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+class Transaction(models.Model):
+    event = models.CharField(max_length=255)
+    transaction_ref = models.CharField(max_length=255, unique=True)
+    amount = models.IntegerField()
+    gateway_ref = models.CharField(max_length=255)
+    transaction_status = models.CharField(max_length=50)
+    email = models.EmailField(max_length=255)
+    merchant_id = models.CharField(max_length=255)
+    currency = models.CharField(max_length=3)
+    transaction_type = models.CharField(max_length=50)
+    merchant_amount = models.IntegerField()
+    created_at = models.DateTimeField()
+    payment_information = models.JSONField()  # Requires Django 3.1+
+    is_recurring = models.BooleanField()
+
+    # The 'meta' field is nested in the JSON. It's stored here as a JSONField.
+    meta = models.JSONField()
+
+    def set_meta(self, meta):
+        self.meta = json.dumps(meta)
+
+    def get_meta(self):
+        return json.loads(self.meta)

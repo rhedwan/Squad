@@ -1,17 +1,8 @@
 from rest_framework import serializers
-from .models import PaymentLink
+from .models import Transaction
 
 
-class PaymentLinkSerializer(serializers.ModelSerializer):
+class TransactionSerializer(serializers.ModelSerializer):
     class Meta:
-        model = PaymentLink
-        fields = [
-            "pkid",
-            "id",
-            "created_at",
-            "updated_at",
-            "name",
-            "description",
-            "price",
-            # "created_by",
-        ]
+        model = Transaction
+        fields = "__all__"
